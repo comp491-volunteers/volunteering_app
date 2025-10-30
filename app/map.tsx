@@ -19,6 +19,14 @@ export default function MapScreen() {
           onPress={() => router.push("/taskDetail")}
         />
       </View>
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import IstanbulMap from '@/components/map/IstanbulMap';
+
+export default function MapScreen() {
+  return (
+    <View style={styles.container}>
+      <IstanbulMap />
     </View>
   );
 }
