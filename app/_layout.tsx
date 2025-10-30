@@ -1,3 +1,8 @@
+// Defines global navigation "stack" --> controller that renders
+// one route at a time and keeps history stack, for Expo Router
+//every file is a route in /app, index.tsx = "/" route --> login screen
+
+
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
