@@ -1,0 +1,12 @@
+[
+  {
+    "id": "t1",
+    "title": "Beach Clean-Up",
+    "ngo": "TURMEPA",
+    "date": "Sat 10:00",
+    "duration": 3,
+    "lat": 41.0369,
+    "lng": 29.0078,
+    "desc": "Collect litter along the shore."
+  }
+]
