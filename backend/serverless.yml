@@ -1,0 +1,139 @@
+service: volunteering-app-backend
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: dev
+  httpApi:
+    cors: true
+  environment:
+    USERS_TABLE: ${self:service}-${self:provider.stage}-users
+    EVENTS_TABLE: ${self:service}-${self:provider.stage}-events
+    RESERVATIONS_TABLE: ${self:service}-${self:provider.stage}-reservations
+    ATTENDANCE_TABLE: ${self:service}-${self:provider.stage}-attendance
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EVENTS_TABLE}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RESERVATIONS_TABLE}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.ATTENDANCE_TABLE}
+
+functions:
+  health:
+    handler: src/handlers/health.handler
+    events:
+      - httpApi:
+          path: /health
+          method: GET
+  listEvents:
+    handler: src/handlers/events.list
+    events:
+      - httpApi:
+          path: /events
+          method: GET
+  createEvent:
+    handler: src/handlers/events.create
+    events:
+      - httpApi:
+          path: /events
+          method: POST
+          authorizer: none
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+
+    EventsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.EVENTS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: eventId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: eventId
+            KeyType: HASH
+
+    ReservationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.RESERVATIONS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: reservationId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: eventId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: reservationId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: byUser
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: byEvent
+            KeySchema:
+              - AttributeName: eventId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    AttendanceTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.ATTENDANCE_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: proofId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: eventId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: proofId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: byUser
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: byEvent
+            KeySchema:
+              - AttributeName: eventId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+

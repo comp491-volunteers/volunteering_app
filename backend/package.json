@@ -1,0 +1,15 @@
+{
+  "name": "volunteering-app-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "deploy": "npx serverless deploy",
+    "remove": "npx serverless remove",
+    "info": "npx serverless info"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
+
+
