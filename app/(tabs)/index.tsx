@@ -1,11 +1,11 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Pressable } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 export default function HomeScreen() {
   return (
@@ -21,6 +21,20 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      
+      {/* MAP BUTTON - ADDED BY DAMLA */}
+      <ThemedView style={styles.mapButtonContainer}>
+        <Pressable 
+          style={styles.mapButton}
+          onPress={() => router.push('/map')}
+        >
+          <ThemedText style={styles.mapButtonText}>📍 View Event Map</ThemedText>
+        </Pressable>
+        <ThemedText style={styles.mapDescription}>
+          Click here to see the Istanbul event map with 3 locations
+        </ThemedText>
+      </ThemedView>
+      
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
@@ -94,5 +108,27 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  mapButtonContainer: {
+    gap: 8,
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  mapButton: {
+    backgroundColor: '#007AFF',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  mapDescription: {
+    fontSize: 14,
+    textAlign: 'center',
+    opacity: 0.7,
   },
 });
